@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# poll_goatcounter.sh — GoatCounter 방문자 수 폴링 + lift 계산
+# poll_goatcounter.sh — GoatCounter 방문자 수 폴링 + lift 계산 + file_parsed 50건 임계 체크
 #
 # 사용법:
 #   ./scripts/poll_goatcounter.sh
@@ -10,8 +10,13 @@
 #
 # 출력:
 #   - 오늘/7일/30일 방문자 수
+#   - file_parsed 이벤트 누적 수 (7일) → 50건 도달 시 experiment_bi trigger
 #   - freemium 전환 기준 (30일 200명) 도달 여부
 #   - 페이지별 인기 순위
+#
+# experiment_bi trigger 조건:
+#   7일 누적 file_parsed >= 50 → logs/experiment_bi_trigger.json 생성
+#   (cost_watch가 이 파일 존재 여부를 확인해 experiment_bi 팀 enqueue)
 
 set -euo pipefail
 
@@ -64,6 +69,55 @@ else
   echo "  freemium 전환까지: ${REMAINING}명 남음 (목표 30일 200명)"
 fi
 
+# ── file_parsed 이벤트 누적 수 (7일) ──────────────────────────────────────
+# GoatCounter 이벤트는 path=/event/file_parsed 로 추적됨
+FILE_PARSED_THRESHOLD=50
+FILE_PARSED_TRIGGER="$REPO_ROOT/logs/experiment_bi_trigger.json"
+
+echo ""
+echo "📈 file_parsed 이벤트 (7일 누적)"
+
+# 페이지별 통계에서 /event/file_parsed 추출
+HITS_RAW=$(curl -s -f \
+  -H "Authorization: Bearer $TOKEN" \
+  "$API_BASE/stats/hits?start=$DAY7&end=$TODAY&limit=100" 2>/dev/null || echo '{"hits":[]}')
+
+FILE_PARSED_COUNT=$(echo "$HITS_RAW" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+hits = d.get('hits', [])
+count = sum(h.get('count', 0) for h in hits if h.get('path','') == '/event/file_parsed')
+print(count)
+" 2>/dev/null || echo 0)
+
+echo "  file_parsed 7일: $FILE_PARSED_COUNT 건 (임계: $FILE_PARSED_THRESHOLD)"
+
+# experiment_bi trigger 판정
+if [ "$FILE_PARSED_COUNT" -ge "$FILE_PARSED_THRESHOLD" ]; then
+  echo ""
+  echo "🎯 file_parsed 임계 달성! ($FILE_PARSED_COUNT ≥ $FILE_PARSED_THRESHOLD)"
+  echo "   → experiment_bi trigger 파일 생성"
+  mkdir -p "$REPO_ROOT/logs"
+  python3 - << PYEOF
+import json
+data = {
+    "trigger": "experiment_bi",
+    "reason": "file_parsed_7d_ge_50",
+    "file_parsed_7d": $FILE_PARSED_COUNT,
+    "threshold": $FILE_PARSED_THRESHOLD,
+    "triggered_at": "$TODAY",
+    "action": "funnel 분석 재실행 (upload→parse→copy→donation 전환율) → experiment_bi 승자 판정"
+}
+with open("$FILE_PARSED_TRIGGER", "w") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+print("  trigger 파일: $FILE_PARSED_TRIGGER")
+PYEOF
+else
+  REMAINING=$((FILE_PARSED_THRESHOLD - FILE_PARSED_COUNT))
+  echo "  experiment_bi 까지: ${REMAINING}건 남음"
+  # 이미 trigger 된 적 있으면 유지 (재생성 X)
+fi
+
 # 페이지별 통계 (상위 5)
 echo ""
 echo "📄 페이지별 인기 (30일)"
@@ -87,11 +141,14 @@ PYEOF
 LOG_FILE="$REPO_ROOT/logs/goatcounter_$(date +%Y%m%d).json"
 mkdir -p "$REPO_ROOT/logs"
 python3 - << PYEOF
-import json, datetime
+import json
 data = {
     "date": "$TODAY",
     "visitors_7d": $VISITORS_7,
     "visitors_30d": $VISITORS_30,
+    "file_parsed_7d": $FILE_PARSED_COUNT,
+    "file_parsed_threshold": $FILE_PARSED_THRESHOLD,
+    "experiment_bi_triggered": $FILE_PARSED_COUNT >= $FILE_PARSED_THRESHOLD,
     "freemium_threshold": $THRESHOLD,
     "freemium_ready": $VISITORS_30 >= $THRESHOLD
 }
