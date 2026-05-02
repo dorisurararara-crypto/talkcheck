@@ -59,7 +59,8 @@
   <header>
     <div>
       <div class="logo">TalkCheck</div>
-      <div class="subtitle">카톡 단톡방 무응답자 찾기</div>
+      <div class="subtitle">카톡 단톡 공지<br>무응답자 10초 만에 찾기</div>
+      <p class="hero-subhead">txt 파일 하나면 @멘션 문자 즉시 완성. 무료, 서버 전송 없음.</p>
     </div>
   </header>
 
@@ -70,7 +71,7 @@
       <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="채팅 파일 선택 또는 드래그앤드롭">
         <span class="icon">💬</span>
         <p>파일을 여기 끌어다 놓거나<br>클릭해서 선택하세요</p>
-        <p style="font-size:0.78rem;margin-top:8px;color:#aaa">iOS / Android 내보내기 (.txt) 지원</p>
+        <p style="font-size:0.78rem;margin-top:8px;color:#aaa">iOS / Android 카카오톡 내보내기 (.txt)</p>
         <p class="file-name" id="fileName" aria-live="polite"></p>
       </div>
       <input type="file" id="fileInput" accept=".txt" aria-hidden="true">
@@ -92,7 +93,7 @@
       <div class="input-group">
         <label for="keyword">키워드</label>
         <input type="text" id="keyword" placeholder="예: 공지, 중요, 필독" maxlength="50" autocomplete="off">
-        <p class="input-hint">입력한 키워드가 포함된 첫 메시지를 공지로 인식합니다</p>
+        <p class="input-hint">이 단어가 들어간 첫 메시지를 공지로 봐요</p>
       </div>
     </div>
 
@@ -102,7 +103,7 @@
     </button>
 
     <!-- 로딩 -->
-    <div class="loading" id="loading" aria-live="polite">파일 분석 중...</div>
+    <div class="loading" id="loading" aria-live="polite">분석 중...</div>
 
     <!-- 에러 -->
     <div class="error-msg" id="errorMsg" role="alert" aria-live="assertive"></div>
@@ -117,7 +118,7 @@
         <!-- 무응답자 없음 -->
         <div class="no-result" id="noNonResponders" style="display:none;">
           <span class="icon">✅</span>
-          모든 멤버가 공지 후 응답했습니다!
+          모든 멤버가 응답했어요! ✅
         </div>
 
         <!-- 무응답자 있음 -->
@@ -151,7 +152,7 @@
 
     <!-- Toss 도네이션 -->
     <div class="footer-donate">
-      ☕ <a href="https://toss.me/dorisurararara" target="_blank" rel="noopener"><strong>후원하기</strong> — Toss로 커피 한 잔</a>
+      유용하게 쓰셨다면 ☕ <a href="https://toss.me/dorisurararara" target="_blank" rel="noopener" id="tossLink"><strong>커피 한 잔 후원</strong></a>
     </div>
 
     <div class="footer-links">
@@ -163,7 +164,7 @@
     </div>
 
     <div style="font-size:0.75rem;color:#ccc;">
-      &copy; 2026 TalkCheck · 파일은 기기에서만 처리됩니다
+      &copy; 2026 TalkCheck · 파일은 기기에서만 처리됩니다 · 서버 전송 없음
     </div>
   </footer>
 
@@ -212,14 +213,14 @@
         parsedData = parseKakaoTxt(text);
 
         if (parsedData.format === 'unknown') {
-          showError('파일 형식을 인식하지 못했습니다. 카카오톡 대화 내보내기 파일(.txt)을 선택해주세요.');
+          showError('카카오톡 txt 파일만 됩니다. 채팅방 → 대화 내보내기 → 파일로 저장 후 다시 올려보세요.');
           parsedData = null;
         } else {
           analyzeBtn.disabled = false;
           trackEvent('file_parsed');
         }
       } catch (e) {
-        showError('파일을 읽을 수 없습니다. 다시 시도해주세요.');
+        showError('파일을 읽을 수 없어요. 카카오톡 최신 버전으로 다시 내보내기 해보세요.');
         parsedData = null;
       } finally {
         loading.classList.remove('visible');
@@ -241,7 +242,7 @@
       const { announcedAt, announcerAuthor, matched } = detectAnnouncement(messages, keyword);
 
       if (!matched) {
-        showError(`"${keyword}" 키워드가 포함된 메시지를 찾지 못했습니다.`);
+        showError(`"${keyword}"가 포함된 공지를 찾지 못했어요. 키워드를 바꿔보세요. 채팅에서 실제 쓴 단어 그대로 입력하면 잘 돼요.`);
         return;
       }
 
@@ -254,7 +255,7 @@
 
       // 결과 메타
       resultMeta.innerHTML =
-        `전체 <span>${members.size}명</span> · 응답 <span>${responders.length}명</span> · 무응답 <span>${nonResponders.length}명</span>`;
+        `전체 <span>${members.size}명</span> 중 <span>${responders.length}명</span> 응답 완료`;
 
       if (nonResponders.length === 0) {
         noNonResponders.style.display = 'block';
@@ -265,8 +266,8 @@
 
         // 배지
         responderStatus.innerHTML =
-          `<span class="badge badge-green">✓ 응답 ${responders.length}명</span>` +
-          `<span class="badge badge-red">✗ 무응답 ${nonResponders.length}명</span>`;
+          `<span class="badge badge-red">${nonResponders.length}명이 아직 응답 안 했어요</span>` +
+          `<span class="badge badge-green">✓ ${responders.length}명 응답 완료</span>`;
 
         // 무응답자 목록
         nonResponderList.innerHTML = nonResponders
@@ -287,7 +288,7 @@
       const text = mentionBox.textContent;
       const ok = await copyToClipboard(text);
       if (ok) {
-        copyBtn.textContent = '✅ 복사됨!';
+        copyBtn.textContent = '✓ 복사됐어요';
         copyBtn.classList.add('copied');
         setTimeout(() => {
           copyBtn.textContent = '📋 복사하기';
@@ -324,6 +325,12 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    // Toss 후원 클릭 추적
+    const tossLink = document.getElementById('tossLink');
+    if (tossLink) {
+      tossLink.addEventListener('click', () => trackEvent('toss_donate_click'));
     }
 
     // PWA 서비스 워커 등록 — 루트 상대 경로 (GitHub Pages 서브디렉토리 호환)

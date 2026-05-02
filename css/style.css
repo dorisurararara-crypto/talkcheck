@@ -52,8 +52,17 @@ header .logo {
 }
 
 header .subtitle {
-  font-size: 0.85rem;
-  color: #444;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+  line-height: 1.35;
+}
+
+header .hero-subhead {
+  font-size: 0.78rem;
+  color: #555;
+  margin: 4px 0 0;
+  line-height: 1.4;
 }
 
 /* ── Main ── */
