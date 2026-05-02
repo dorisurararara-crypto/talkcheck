@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단톡방 공지 확인 안 읽은 사람 줄이는 방법 7가지 + 무응답자 자동 추출 — TalkCheck</title>
+  <meta name="description" content="카카오톡 단체방 공지를 보내도 읽씹·무시하는 멤버가 생기는 이유와 해결법. 공지 작성 팁 7가지 + 미확인자 @멘션 자동 추출로 리마인드까지.">
+  <link rel="canonical" href="https://dorisurararara-crypto.github.io/talkcheck/docs/group-notice-tips.html">
+  <meta property="og:title" content="단톡방 공지 안 읽은 사람 줄이는 방법 7가지 — TalkCheck">
+  <meta property="og:description" content="카카오톡 단체방 공지 읽씹·무응답 줄이는 팁 + 그래도 안 읽은 사람 자동 추출하는 방법.">
+  <meta property="og:url" content="https://dorisurararara-crypto.github.io/talkcheck/docs/group-notice-tips.html">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ko_KR">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="단톡방 공지 읽씹 줄이는 방법 7가지 — TalkCheck">
+  <meta name="twitter:description" content="공지 무시 멤버 줄이는 팁 + 그래도 안 읽은 사람 자동 멘션 추출.">
+  <link rel="stylesheet" href="../css/style.css">
+  <!-- GoatCounter 분석 -->
+  <script data-goatcounter="https://talkcheck.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "단톡방 공지 확인 안 읽은 사람 줄이는 방법",
+    "description": "카카오톡 단체방 공지를 보내도 확인 안 하는 멤버를 줄이는 실전 팁과, 그래도 미확인자를 자동으로 추출하는 방법.",
+    "url": "https://dorisurararara-crypto.github.io/talkcheck/docs/group-notice-tips.html",
+    "inLanguage": "ko-KR",
+    "publisher": { "@type": "Organization", "name": "TalkCheck" },
+    "datePublished": "2026-05-03",
+    "step": [
+      { "@type": "HowToStep", "name": "공지 첫 줄에 핵심 행동을 명시하기" },
+      { "@type": "HowToStep", "name": "확인 요청 키워드 포함하기" },
+      { "@type": "HowToStep", "name": "마감 날짜·시간 명시하기" },
+      { "@type": "HowToStep", "name": "단일 메시지로 압축하기" },
+      { "@type": "HowToStep", "name": "공지 고정 기능 활용하기" },
+      { "@type": "HowToStep", "name": "리마인드 타이밍 정하기" },
+      { "@type": "HowToStep", "name": "TalkCheck로 미확인자 자동 추출 후 @멘션 리마인드" }
+    ]
+  }
+  </script>
+  <style>
+    main { max-width: 680px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; line-height: 1.45; }
+    h2 { font-size: 1.05rem; margin-top: 36px; margin-bottom: 10px; color: #222; }
+    h3 { font-size: 0.95rem; margin-top: 20px; margin-bottom: 6px; color: #333; }
+    p, li { font-size: 0.92rem; line-height: 1.8; color: #444; }
+    li { margin-bottom: 4px; }
+    .intro { color: #666; font-size: 0.9rem; margin-bottom: 28px; border-left: 3px solid #FEE500; padding-left: 12px; }
+    .tip-card { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 16px 20px; margin-bottom: 18px; }
+    .tip-num { display: inline-block; background: #FEE500; color: #333; font-weight: bold; font-size: 0.82rem; border-radius: 50%; width: 22px; height: 22px; text-align: center; line-height: 22px; margin-right: 8px; }
+    .tip-title { font-size: 0.97rem; font-weight: bold; color: #222; }
+    .tip-body { font-size: 0.88rem; color: #555; margin-top: 8px; line-height: 1.7; }
+    .example { background: #f0f0f0; border-radius: 5px; padding: 8px 12px; font-size: 0.85rem; color: #333; margin-top: 8px; font-family: monospace; white-space: pre-line; }
+    .highlight-box { background: #fffbe6; border: 1px solid #ffe066; border-radius: 8px; padding: 18px 20px; margin: 28px 0; }
+    .highlight-box h2 { margin-top: 0; color: #7c5a00; }
+    .highlight-box p, .highlight-box li { color: #5c4300; }
+    .cta-btn { display: inline-block; background: #FEE500; color: #111; text-decoration: none; padding: 12px 26px; border-radius: 7px; font-weight: bold; font-size: 0.93rem; margin-top: 10px; }
+    .cta-btn:hover { background: #f5db00; }
+    .back { display: inline-block; margin-bottom: 20px; font-size: 0.85rem; color: #888; text-decoration: none; }
+    .back:hover { color: #333; }
+    .toc { background: #f8f8f8; border-radius: 7px; padding: 14px 18px; margin-bottom: 28px; font-size: 0.88rem; }
+    .toc ol { margin: 6px 0 0; padding-left: 18px; }
+    .toc li { margin-bottom: 4px; }
+    .toc a { color: #555; text-decoration: none; }
+    .toc a:hover { color: #111; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">TalkCheck</div>
+      <div class="subtitle">카톡 단톡방 무응답자 찾기</div>
+    </div>
+  </header>
+  <main>
+    <a href="../index.html" class="back">← 메인으로</a>
+
+    <h1>단톡방 공지 확인 안 읽은 사람 줄이는<br>실전 팁 7가지</h1>
+    <p class="intro">카카오톡 단체방에 공지를 보내도 절반이 읽씹·무시하는 상황, 한 번쯤 겪어보셨을 겁니다. 이 글은 공지 자체를 잘 만들어 미확인율을 낮추는 팁 7가지와, 그래도 안 읽은 사람을 10초 만에 자동으로 추출하는 방법을 정리합니다.</p>
+
+    <nav class="toc">
+      <strong>목차</strong>
+      <ol>
+        <li><a href="#tip1">첫 줄에 행동 요청 명시</a></li>
+        <li><a href="#tip2">확인 요청 키워드 삽입</a></li>
+        <li><a href="#tip3">마감 날짜·시간 명시</a></li>
+        <li><a href="#tip4">메시지 1개로 압축</a></li>
+        <li><a href="#tip5">공지 고정 기능 활용</a></li>
+        <li><a href="#tip6">리마인드 타이밍 정하기</a></li>
+        <li><a href="#tip7">미확인자 자동 추출 후 @멘션 리마인드</a></li>
+      </ol>
+    </nav>
+
+    <!-- 팁 1 -->
+    <div class="tip-card" id="tip1">
+      <span class="tip-num">1</span><span class="tip-title">첫 줄에 "무엇을 해야 하는지" 명시하기</span>
+      <div class="tip-body">
+        공지 첫 줄이 배경 설명이면 알림 미리보기에서 "오늘 회의 관련해서…" 만 보입니다. 바빠서 클릭 안 하면 끝입니다.
+        <strong>첫 줄에 행동 동사</strong>를 직접 쓰세요.
+        <div class="example">❌ "안녕하세요, 이번 주 행사 관련해서 공지드립니다..."
+✅ "[필독] 5월 10일까지 참석 여부 댓글 달아주세요"</div>
+      </div>
+    </div>
+
+    <!-- 팁 2 -->
+    <div class="tip-card" id="tip2">
+      <span class="tip-num">2</span><span class="tip-title">"필독", "확인", "댓글" 키워드 명시적으로 넣기</span>
+      <div class="tip-body">
+        멤버들이 단톡방 알림을 훑어볼 때 "내가 해야 하는 일인지" 즉시 판단합니다.
+        <strong>[필독]</strong>, <strong>[댓글 필수]</strong>, <strong>[확인 요망]</strong> 같은 태그를 공지 앞에 붙이면 클릭률이 올라갑니다.
+        <br><br>TalkCheck의 키워드 입력란에도 이 단어를 그대로 쓰면 자동으로 해당 공지 이후 무응답자를 추출할 수 있습니다.
+      </div>
+    </div>
+
+    <!-- 팁 3 -->
+    <div class="tip-card" id="tip3">
+      <span class="tip-num">3</span><span class="tip-title">마감 날짜와 시간을 구체적으로 명시하기</span>
+      <div class="tip-body">
+        "곧", "빠른 시일 내" 같은 모호한 표현은 '나중에 해야지' 로 잊힙니다.
+        <strong>날짜·시간을 숫자로 명시</strong>하면 확인율이 높아집니다.
+        <div class="example">✅ "5월 8일(목) 오후 6시까지 참석 여부 댓글 부탁드립니다"</div>
+      </div>
+    </div>
+
+    <!-- 팁 4 -->
+    <div class="tip-card" id="tip4">
+      <span class="tip-num">4</span><span class="tip-title">메시지 1개로 압축하기 — 연속 전송 금물</span>
+      <div class="tip-body">
+        카카오톡 알림은 메시지 단위로 진동합니다. 내용을 3~4개로 나눠 보내면 첫 번째만 보고 나머지는 훑어보게 됩니다.
+        핵심 내용은 <strong>메시지 1개에 모두 담는 것</strong>이 원칙입니다.
+        <br><br>긴 내용은 파일이나 링크로 첨부하고, 단톡 공지에는 행동 요청만 남기세요.
+      </div>
+    </div>
+
+    <!-- 팁 5 -->
+    <div class="tip-card" id="tip5">
+      <span class="tip-num">5</span><span class="tip-title">카카오톡 공지 고정 기능 활용하기</span>
+      <div class="tip-body">
+        공지 메시지를 길게 누르면 "공지로 등록" 메뉴가 나옵니다. 등록된 공지는 채팅방 상단에 고정되어 멤버들이 채팅방에 들어올 때마다 볼 수 있습니다.
+        <strong>마감 전까지 고정 유지</strong>하면 늦게 들어온 멤버도 놓치지 않습니다.
+      </div>
+    </div>
+
+    <!-- 팁 6 -->
+    <div class="tip-card" id="tip6">
+      <span class="tip-num">6</span><span class="tip-title">리마인드 타이밍을 미리 정하기</span>
+      <div class="tip-body">
+        공지 후 24시간이 지나면 반응 없는 멤버는 확인을 미뤘거나 놓친 것입니다.
+        <strong>마감 24~48시간 전에 리마인드</strong>를 보내는 게 효과적입니다.
+        리마인드는 전체 멘션보다 미확인자만 정확히 멘션하는 게 더 예의 있고, 반응율도 높습니다.
+        <div class="example">✅ "마감 내일이에요! @철수 @민지 @영수 확인 부탁드려요 🙏"</div>
+      </div>
+    </div>
+
+    <!-- 팁 7 — talkcheck 자연 연결 -->
+    <div class="tip-card" id="tip7" style="border-color:#FEE500;">
+      <span class="tip-num">7</span><span class="tip-title">TalkCheck로 미확인자 자동 추출 — @멘션 리마인드까지</span>
+      <div class="tip-body">
+        위 6가지를 모두 해도 몇 명은 꼭 놓칩니다. 그때 미확인자를 일일이 스크롤하며 찾는 대신, <strong>카카오톡 대화 내보내기 .txt 파일을 TalkCheck에 올리면</strong> 공지 이후 아무 말도 하지 않은 멤버 목록과 바로 붙여넣기 가능한 @멘션 문자를 자동으로 만들어 줍니다.
+        <ul style="margin-top:10px;">
+          <li>50명 단톡방 기준 10~30초 완료</li>
+          <li>서버 전송 0 — 파일은 내 브라우저 안에서만 처리</li>
+          <li>iOS·Android 내보내기 형식 모두 지원</li>
+          <li>완전 무료, 로그인·설치 없음</li>
+        </ul>
+        <a href="../index.html" class="cta-btn" style="display:inline-block;margin-top:14px;">TalkCheck 바로 사용하기 →</a>
+      </div>
+    </div>
+
+    <!-- 자주 묻는 질문 -->
+    <h2>자주 묻는 질문</h2>
+
+    <h3>공지를 여러 번 보냈는데 어느 공지 기준으로 무응답자를 찾나요?</h3>
+    <p>TalkCheck는 입력한 키워드가 처음 등장하는 메시지를 기준으로 합니다. 가장 최근 공지 기준으로 찾으려면 그 공지에만 있는 구체적인 단어(예: "5월 8일 참석")를 키워드로 입력하세요.</p>
+
+    <h3>100명 이상 대형 단톡방도 되나요?</h3>
+    <p>네. 파일 크기 제한이 없으며 브라우저 메모리 한도 안에서 모두 처리됩니다. 파일이 크면 분석에 1~2초 더 걸릴 수 있지만 정확도는 동일합니다.</p>
+
+    <h3>카카오톡 오픈채팅방도 지원되나요?</h3>
+    <p>오픈채팅방도 동일한 방법으로 대화를 내보낼 수 있으면 TalkCheck에서 분석 가능합니다. 단, 오픈채팅은 닉네임이 자주 바뀌어 멤버 식별 정확도가 낮아질 수 있습니다.</p>
+
+    <div class="highlight-box">
+      <h2>정리: 단톡방 공지 확인율 높이는 순서</h2>
+      <ol>
+        <li>공지 첫 줄 = 행동 요청 + 마감 날짜</li>
+        <li>[필독] 태그 + 메시지 1개 압축</li>
+        <li>카카오톡 공지 고정 기능 등록</li>
+        <li>24~48시간 전 리마인드 예약</li>
+        <li>TalkCheck로 미확인자 자동 추출 → @멘션 리마인드</li>
+      </ol>
+    </div>
+
+    <p style="margin-top:24px;font-size:0.9rem;color:#666;">
+      카카오톡 대화 내보내기 방법이 궁금하다면 → <a href="how-to-export.html">iOS·Android 내보내기 가이드</a><br>
+      다른 방법과 시간 비교가 궁금하다면 → <a href="compare.html">방법별 비교 (수동 vs TalkCheck)</a>
+    </p>
+  </main>
+  <footer>
+    <div class="footer-donate">
+      ☕ <a href="https://toss.me/dorisurararara" target="_blank" rel="noopener"><strong>후원하기</strong> — Toss로 커피 한 잔</a>
+    </div>
+    <div class="footer-links">
+      <a href="faq.html">자주 묻는 질문</a>
+      <a href="privacy.html">개인정보 처리방침</a>
+      <a href="how-to-export.html">채팅 내보내기 방법</a>
+      <a href="use-cases.html">활용 사례</a>
+      <a href="compare.html">방법 비교</a>
+      <a href="https://github.com/dorisurararara-crypto/talkcheck" target="_blank" rel="noopener">GitHub</a>
+    </div>
+    <div style="font-size:0.75rem;color:#ccc;">&copy; 2026 TalkCheck · 파일은 기기에서만 처리됩니다</div>
+  </footer>
+</body>
+</html>
