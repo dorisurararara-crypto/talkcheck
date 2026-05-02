@@ -1,57 +1,97 @@
 {
   "app": "talkcheck",
-  "version": "0.2.0",
-  "version_pre": "0.2.0-pre",
-  "status": "pending_adsense_activation",
-  "commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98",
-  "commit_short": "6e27915",
+  "version": "0.1.1",
+  "version_next": "0.2.0",
+  "status": "live_pending_adsense",
+  "commit": "0d32714468c5ae004cff1403373e24be97026359",
+  "commit_short": "0d32714",
   "timestamp": "2026-05-03T00:00:00Z",
   "deploy_url": "https://dorisurararara-crypto.github.io/talkcheck/",
   "repo": "https://github.com/dorisurararara-crypto/talkcheck",
   "stack": "Vanilla JS SPA + PWA (no dependencies)",
-  "platform": "GitHub Pages",
+  "platform": "GitHub Pages (main → pages.yml → ~2분 배포)",
   "revenue_channels": [
-    { "id": "toss_donation", "status": "active", "url": "https://toss.me/dorisurararara", "day1": true },
-    { "id": "adsense", "status": "pending_pub_id", "activate_script": "scripts/activate_adsense.sh <pub-ID> <ad-slot>", "apply_email": "dorisurararara@gmail.com" }
+    {
+      "id": "toss_donation",
+      "status": "active",
+      "url": "https://toss.me/dorisurararara",
+      "day1": true
+    },
+    {
+      "id": "adsense",
+      "status": "pending_pub_id",
+      "blocker": "HUMAN_REQUIRED — dorisurararara@gmail.com → https://adsense.google.com/start/ 가입",
+      "activate_script": "scripts/activate_adsense.sh <pub-ID> <ad-slot>",
+      "estimated_review_days": "1-14"
+    }
   ],
   "rollback": {
-    "anchor_tag": "v0.1.0",
-    "anchor_commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208",
-    "pre_adsense_tag": "v0.2.0-pre",
-    "pre_adsense_commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98",
-    "method": "git checkout <tag> -- . && git add -A && git commit -m 'revert: rollback to <tag>' && git push origin main",
-    "alt_method": "git push origin <tag_commit>:main --force",
-    "deploy_trigger": "main push → .github/workflows/pages.yml → GitHub Pages (~2분)",
-    "estimated_rto": "3분 이내",
+    "authority": "release_ops (자율 권한 보유)",
     "checkpoints": [
-      { "tag": "v0.1.0", "commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208", "desc": "초기 출시 — 기본 기능 완성, Toss 활성" },
-      { "tag": "v0.2.0-pre", "commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98", "desc": "AdSense 활성화 직전 — SEO/법무/모니터링 추가" },
-      { "tag": "v0.2.0", "commit": "TBD — activate_adsense.sh 실행 후 태그 예정", "desc": "AdSense 활성화 완료 (pub ID 교체)" }
-    ]
+      {
+        "tag": "v0.1.0",
+        "commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208",
+        "desc": "초기 출시 — 기본 기능 + Toss 활성",
+        "safe_for": "완전 기능 복원"
+      },
+      {
+        "tag": "v0.1.1",
+        "commit": "0d32714468c5ae004cff1403373e24be97026359",
+        "desc": "MULTILINE-005 + TIMESTAMP-EQ-007 수정 + Node.js 24",
+        "safe_for": "현재 운영 버전 (HEAD)"
+      },
+      {
+        "tag": "v0.2.0-pre",
+        "commit": "8c601ec",
+        "desc": "AdSense 활성화 직전 스냅샷 — SEO/법무/모니터링 추가",
+        "safe_for": "AdSense 활성화 전 복원"
+      },
+      {
+        "tag": "v0.2.0",
+        "commit": "TBD — activate_adsense.sh 실행 후 태그 예정",
+        "desc": "AdSense 활성화 완료 (pub ID 교체)",
+        "safe_for": "AdSense 롤백 기준점"
+      }
+    ],
+    "method_safe": "git checkout <tag> -- . && git add -A && git commit -m 'revert: rollback to <tag>' && git push origin main",
+    "method_force": "git push origin <tag_commit>:main --force",
+    "estimated_rto": "3분 이내",
+    "post_rollback_verify": "curl -sI https://dorisurararara-crypto.github.io/talkcheck/ | grep 'HTTP/2 200'"
   },
   "monitoring": {
-    "url_check": "scripts/monitor_url.sh",
-    "goatcounter_poll": "scripts/poll_goatcounter.sh",
-    "goatcounter_threshold": 50,
-    "goatcounter_event": "file_parsed",
-    "experiment_bi_trigger": "file_parsed >= 50 → experiment_bi 팀 재호출",
-    "log": "logs/url_monitor.log",
-    "launchd": "com.openclaw.post_launch (09:00 daily)"
+    "url_check": {
+      "script": "scripts/monitor_url.sh",
+      "interval": "30분",
+      "alert": "Telegram (openclaw notify)",
+      "log": "logs/url_monitor.log"
+    },
+    "goatcounter_poll": {
+      "script": "scripts/poll_goatcounter.sh",
+      "interval": "1일",
+      "threshold_event": "file_parsed >= 50 → experiment_bi 트리거",
+      "log": "logs/goatcounter.log"
+    },
+    "feedback_check": {
+      "script": "scripts/check_feedback_v011.sh",
+      "interval": "1일",
+      "threshold": "GitHub Issues user-feedback 레이블 >= 10건 → v0.1.1 백로그 개시",
+      "state_file": "logs/.v011_triggered"
+    }
   },
   "qa_result": "PASS (10/10 unit + 7/7 dynamic, confidence 0.95)",
   "backlogs": [
-    { "id": "MULTILINE-005", "priority": "mid", "trigger": "feedback >= 10" },
-    { "id": "TIMESTAMP-EQ-007", "priority": "mid", "trigger": "feedback >= 10" },
+    { "id": "MULTILINE-005", "priority": "mid", "status": "DONE — v0.1.1 반영", "trigger": "closed" },
+    { "id": "TIMESTAMP-EQ-007", "priority": "mid", "status": "DONE — v0.1.1 반영", "trigger": "closed" },
     { "id": "A11Y-008", "priority": "low", "trigger": "feedback >= 10" },
     { "id": "TEST-MISSING-009", "priority": "low", "trigger": "feedback >= 10" },
-    { "id": "OG-IMAGE-010", "priority": "low", "trigger": "next_cycle", "note": "1200x630 스크린샷 OG 이미지 생성" },
-    { "id": "PWA-SCREENSHOTS-011", "priority": "low", "trigger": "next_cycle", "note": "manifest.json screenshots[] 채우기" }
+    { "id": "OG-IMAGE-010", "priority": "low", "trigger": "next_cycle" },
+    { "id": "PWA-SCREENSHOTS-011", "priority": "low", "trigger": "next_cycle" }
   ],
   "notes": [
     "ads.txt ca-pub-PLACEHOLDER 상태 — AdSense 승인 후 activate_adsense.sh 1회 실행으로 교체",
     "Toss 도네이션 Day 1 활성 (toss.me/dorisurararara)",
-    "GoatCounter 익명 이벤트 3종 (file_parsed/result_shown/result_copied) 추적 중",
+    "GoatCounter 익명 이벤트 3종 추적 중",
     "Service Worker scope: / (루트), PWA 완전 호환",
-    "GitHub Pages 자동 배포: main push → pages.yml → Actions deploy"
+    "GitHub Pages 자동 배포: main push → pages.yml → ~2분"
   ]
 }
