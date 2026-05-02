@@ -29,12 +29,12 @@ google.com, ${PUB_ID}, DIRECT, f08c47fec0942fa0
 EOF
 
 echo "▶ index.html AdSense 스크립트 활성화"
-# 1) head 안 AdSense script 주석 해제 + pub ID 교체
+# 1) head 안 AdSense script 주석 해제 + ca-pub-PLACEHOLDER → 실 pub ID 교체
 sed -i '' \
-  "s|<!-- <script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000\".*-->|<script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB_ID}\" crossorigin=\"anonymous\"></script>|g" \
+  "s|<!-- <script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-PLACEHOLDER\".*-->|<script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${PUB_ID}\" crossorigin=\"anonymous\"></script>|g" \
   "$REPO_ROOT/index.html"
 
-# 2) footer 광고 블록 주석 해제 + pub ID / slot 교체
+# 2) footer 광고 블록 주석 해제 + pub ID / slot 교체 (ca-pub-PLACEHOLDER, SLOT-PLACEHOLDER → 실 값)
 python3 - << PYEOF
 import re, pathlib
 
@@ -42,12 +42,12 @@ path = pathlib.Path("${REPO_ROOT}/index.html")
 html = path.read_text()
 
 # footer-ads 블록 내 주석 해제 및 ID 교체
-old_block = r'<!-- AdSense 승인 후 아래 주석 해제\s*\n\s*(<ins[\s\S]*?</ins>)\s*\n\s*-->'
+old_block = r'<!-- AdSense 승인 후 activate_adsense\.sh 실행 시 자동 활성화\s*\n\s*(<ins[\s\S]*?</ins>)\s*\n\s*-->'
 match = re.search(old_block, html)
 if match:
     ins_tag = match.group(1)
-    ins_tag = ins_tag.replace('ca-pub-0000000000000000', '${PUB_ID}')
-    ins_tag = ins_tag.replace('XXXXXXXXXX', '${AD_SLOT}')
+    ins_tag = ins_tag.replace('ca-pub-PLACEHOLDER', '${PUB_ID}')
+    ins_tag = ins_tag.replace('SLOT-PLACEHOLDER', '${AD_SLOT}')
     invoke_js = '(adsbygoogle = window.adsbygoogle || []).push({});'
     html = html.replace(match.group(0), ins_tag + '\n      <script>' + invoke_js + '</script>')
 
