@@ -1,1 +1,2 @@
-google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+# AdSense 승인 후 실 pub ID로 교체
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
