@@ -23,6 +23,32 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="manifest" href="pwa/manifest.json">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "TalkCheck",
+    "alternateName": "톡체크",
+    "description": "카카오톡 단체 채팅방 대화 내보내기 파일로 공지 무응답자를 찾아 @멘션 텍스트를 자동 생성합니다. 서버 전송 0, 완전 무료.",
+    "url": "https://dorisurararara-crypto.github.io/talkcheck/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "ko-KR",
+    "featureList": [
+      "카카오톡 iOS/Android 내보내기 파일 자동 감지",
+      "공지 키워드 지정 무응답자 추출",
+      "@멘션 텍스트 원클릭 생성",
+      "브라우저 내부 처리 — 서버 전송 없음",
+      "PWA 오프라인 지원"
+    ],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "screenshot": "https://dorisurararara-crypto.github.io/talkcheck/pwa/icons/icon-512.png"
+  }
+  </script>
   <!-- GoatCounter 분석 (무료 100k/월) -->
   <script data-goatcounter="https://talkcheck.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
@@ -130,6 +156,7 @@
 
     <div class="footer-links">
       <a href="docs/faq.html">자주 묻는 질문</a>
+      <a href="docs/use-cases.html">활용 사례</a>
       <a href="docs/privacy.html">개인정보 처리방침</a>
       <a href="docs/how-to-export.html">채팅 내보내기 방법</a>
       <a href="https://github.com/dorisurararara-crypto/talkcheck" target="_blank" rel="noopener">GitHub</a>
