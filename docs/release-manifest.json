@@ -1,52 +1,57 @@
 {
   "app": "talkcheck",
-  "version": "0.1.0",
-  "commit": "c915f30b46d92a3c8bb131f474437ef6a00f8671",
-  "commit_short": "c915f30",
-  "timestamp": "2026-05-02T12:27:21Z",
+  "version": "0.2.0",
+  "version_pre": "0.2.0-pre",
+  "status": "pending_adsense_activation",
+  "commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98",
+  "commit_short": "6e27915",
+  "timestamp": "2026-05-03T00:00:00Z",
   "deploy_url": "https://dorisurararara-crypto.github.io/talkcheck/",
   "repo": "https://github.com/dorisurararara-crypto/talkcheck",
   "stack": "Vanilla JS SPA + PWA (no dependencies)",
   "platform": "GitHub Pages",
-  "files_total": 21,
   "revenue_channels": [
-    { "id": "toss_donation", "status": "active", "url": "https://toss.me/dorisurararara" },
-    { "id": "adsense", "status": "pending_approval", "activate_script": "scripts/activate_adsense.sh <pub-ID> <ad-slot>" }
+    { "id": "toss_donation", "status": "active", "url": "https://toss.me/dorisurararara", "day1": true },
+    { "id": "adsense", "status": "pending_pub_id", "activate_script": "scripts/activate_adsense.sh <pub-ID> <ad-slot>", "apply_email": "dorisurararara@gmail.com" }
   ],
-  "adsense_status": "ads_txt_commented — AdSense 가입 신청 후 승인 대기 (보통 1~14일). 승인 시 activate_adsense.sh 실행",
-  "adsense_apply_url": "https://adsense.google.com/start/",
-  "adsense_apply_email": "dorisurararara@gmail.com",
-  "adsense_site_url": "https://dorisurararara-crypto.github.io/talkcheck/",
+  "rollback": {
+    "anchor_tag": "v0.1.0",
+    "anchor_commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208",
+    "pre_adsense_tag": "v0.2.0-pre",
+    "pre_adsense_commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98",
+    "method": "git checkout <tag> -- . && git add -A && git commit -m 'revert: rollback to <tag>' && git push origin main",
+    "alt_method": "git push origin <tag_commit>:main --force",
+    "deploy_trigger": "main push → .github/workflows/pages.yml → GitHub Pages (~2분)",
+    "estimated_rto": "3분 이내",
+    "checkpoints": [
+      { "tag": "v0.1.0", "commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208", "desc": "초기 출시 — 기본 기능 완성, Toss 활성" },
+      { "tag": "v0.2.0-pre", "commit": "6e279156dbd8b5dbeee372610623ca3c8a5f2d98", "desc": "AdSense 활성화 직전 — SEO/법무/모니터링 추가" },
+      { "tag": "v0.2.0", "commit": "TBD — activate_adsense.sh 실행 후 태그 예정", "desc": "AdSense 활성화 완료 (pub ID 교체)" }
+    ]
+  },
   "monitoring": {
     "url_check": "scripts/monitor_url.sh",
+    "goatcounter_poll": "scripts/poll_goatcounter.sh",
+    "goatcounter_threshold": 50,
+    "goatcounter_event": "file_parsed",
+    "experiment_bi_trigger": "file_parsed >= 50 → experiment_bi 팀 재호출",
     "log": "logs/url_monitor.log",
-    "launchd": "com.openclaw.post_launch (09:00 daily)",
-    "last_check": "2026-05-02T12:19:52Z",
-    "last_status": "OK 200"
+    "launchd": "com.openclaw.post_launch (09:00 daily)"
   },
   "qa_result": "PASS (10/10 unit + 7/7 dynamic, confidence 0.95)",
   "backlogs": [
     { "id": "MULTILINE-005", "priority": "mid", "trigger": "feedback >= 10" },
     { "id": "TIMESTAMP-EQ-007", "priority": "mid", "trigger": "feedback >= 10" },
     { "id": "A11Y-008", "priority": "low", "trigger": "feedback >= 10" },
-    { "id": "TEST-MISSING-009", "priority": "low", "trigger": "feedback >= 10" }
+    { "id": "TEST-MISSING-009", "priority": "low", "trigger": "feedback >= 10" },
+    { "id": "OG-IMAGE-010", "priority": "low", "trigger": "next_cycle", "note": "1200x630 스크린샷 OG 이미지 생성" },
+    { "id": "PWA-SCREENSHOTS-011", "priority": "low", "trigger": "next_cycle", "note": "manifest.json screenshots[] 채우기" }
   ],
-  "feedback_v011_script": "scripts/check_feedback_v011.sh",
-  "rollback": {
-    "anchor_tag": "v0.1.0",
-    "anchor_commit": "2bd64b72b4db4ec180a2358c185eb2e7164a8208",
-    "pre_tag": "v0.1.0-pre",
-    "pre_commit": "5723dfdca35417a86720bb8428c7a8facdeaa00c",
-    "method": "git checkout v0.1.0 && git push origin HEAD:main --force",
-    "deploy_trigger": "main push → .github/workflows/pages.yml → GitHub Actions 자동 배포 (~2분)",
-    "estimated_rto": "3분 이내",
-    "note": "v0.1.0 태그(release 커밋)로 즉시 되돌리기 가능. 더 이전은 v0.1.0-pre 사용."
-  },
   "notes": [
-    "ads.txt 전 라인 주석 처리 — AdSense 승인 전까지 유지",
+    "ads.txt ca-pub-PLACEHOLDER 상태 — AdSense 승인 후 activate_adsense.sh 1회 실행으로 교체",
     "Toss 도네이션 Day 1 활성 (toss.me/dorisurararara)",
-    "GitHub Pages 자동 배포: main push → pages.yml → Actions deploy",
-    "Service Worker scope: / (루트), 상대경로 PWA 완전 호환",
-    "AdSense 신청 링크: https://adsense.google.com/start/ (사용자 본인 로그인 필요 — Google 계정 2단계 인증)"
+    "GoatCounter 익명 이벤트 3종 (file_parsed/result_shown/result_copied) 추적 중",
+    "Service Worker scope: / (루트), PWA 완전 호환",
+    "GitHub Pages 자동 배포: main push → pages.yml → Actions deploy"
   ]
 }
