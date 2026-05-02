@@ -1,18 +1,26 @@
 {
   "app": "talkcheck",
-  "version": "1.0.0",
-  "commit": "40168b36b5ae8365f8a4d1cc7970fa8dd0afd6c8",
-  "timestamp": "2026-05-02T09:44:38Z",
+  "version": "0.1.0",
+  "commit": "7cf0bf27eabf44e90b5fe59ceff37a2d73e4dab8",
+  "timestamp": "2026-05-02T10:30:00Z",
   "deploy_url": "https://dorisurararara-crypto.github.io/talkcheck/",
   "repo": "https://github.com/dorisurararara-crypto/talkcheck",
   "stack": "Vanilla JS SPA + PWA (no dependencies)",
   "files_total": 21,
   "revenue_channels": ["adsense_pending", "toss_donation"],
-  "adsense_status": "placeholder_pub_id",
+  "adsense_status": "ads_txt_commented — AdSense 승인 후 실 pub ID 교체 예정",
+  "qa_result": "PASS (10/10 unit + 7/7 dynamic, confidence 0.95)",
+  "backlogs": ["MULTILINE-005", "TIMESTAMP-EQ-007", "A11Y-008", "TEST-MISSING-009"],
   "notes": [
-    "AdSense pub ID is placeholder (pub-0000000000000000) — must replace before revenue activates",
-    "GoatCounter analytics active (free tier, 100k/month)",
-    "GitHub Pages auto-deploy on main push via pages.yml"
+    "ads.txt 전 라인 주석 처리 — AdSense 승인 전까지 유지",
+    "Toss 도네이션 Day 1 활성 (toss.me/dorisurararara)",
+    "GitHub Pages 자동 배포: main push → pages.yml → Actions deploy",
+    "Service Worker scope: / (루트), 상대경로 PWA 완전 호환"
   ],
-  "rollback_tag": "v1.0.0-pre"
+  "rollback": {
+    "tag": "v0.1.0-pre",
+    "commit": "5723dfd",
+    "method": "git checkout v0.1.0-pre && git push origin HEAD:main --force",
+    "note": "v0.1.0-pre 태그로 즉시 되돌리기 가능. 배포는 main push 자동"
+  }
 }
