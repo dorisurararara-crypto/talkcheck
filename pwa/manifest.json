@@ -22,7 +22,15 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "./screenshots/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "TalkCheck — 카톡 단톡방 무응답자 찾기 메인 화면"
+    }
+  ],
   "categories": ["utilities", "productivity"],
   "prefer_related_applications": false
 }
