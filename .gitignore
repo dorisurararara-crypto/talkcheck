@@ -6,3 +6,5 @@ node_modules/
 secrets/
 *.p8
 *.json.key
+logs/*.log
+logs/.v011_triggered
