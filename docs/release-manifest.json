@@ -1,0 +1,18 @@
+{
+  "app": "talkcheck",
+  "version": "1.0.0",
+  "commit": "40168b36b5ae8365f8a4d1cc7970fa8dd0afd6c8",
+  "timestamp": "2026-05-02T09:44:38Z",
+  "deploy_url": "https://dorisurararara-crypto.github.io/talkcheck/",
+  "repo": "https://github.com/dorisurararara-crypto/talkcheck",
+  "stack": "Vanilla JS SPA + PWA (no dependencies)",
+  "files_total": 21,
+  "revenue_channels": ["adsense_pending", "toss_donation"],
+  "adsense_status": "placeholder_pub_id",
+  "notes": [
+    "AdSense pub ID is placeholder (pub-0000000000000000) — must replace before revenue activates",
+    "GoatCounter analytics active (free tier, 100k/month)",
+    "GitHub Pages auto-deploy on main push via pages.yml"
+  ],
+  "rollback_tag": "v1.0.0-pre"
+}
