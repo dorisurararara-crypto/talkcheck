@@ -172,6 +172,7 @@
   <script src="js/parser.js"></script>
   <script src="js/analyzer.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/ab.js"></script>
   <script src="js/analytics.js"></script>
   <script>
     // ── 앱 초기화 ──
@@ -295,7 +296,8 @@
           copyBtn.textContent = '📋 복사하기';
           copyBtn.classList.remove('copied');
         }, 2000);
-        trackEvent('result_copied');
+        trackEvent('result_copied');        // 변형 미분리 (범용 집계)
+        trackEventAB('copy_btn_click');     // A/B lift 계산용
       }
     });
 

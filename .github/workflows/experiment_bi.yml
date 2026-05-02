@@ -1,0 +1,142 @@
+name: experiment_bi — A/B lift 계산
+
+on:
+  schedule:
+    # 매일 09:00 KST (= 00:00 UTC)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      days:
+        description: '집계 기간 (일)'
+        required: false
+        default: '7'
+
+jobs:
+  ab_lift:
+    name: GoatCounter A/B lift 계산
+    runs-on: ubuntu-latest
+    env:
+      GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+      GOATCOUNTER_API: https://talkcheck.goatcounter.com/api/v0
+      DAYS: ${{ github.event.inputs.days || '7' }}
+
+    steps:
+      - name: GoatCounter 토큰 확인
+        run: |
+          if [ -z "$GOATCOUNTER_TOKEN" ]; then
+            echo "::error::GOATCOUNTER_TOKEN secret 미설정. scripts/setup_goatcounter_token.sh 실행 필요."
+            exit 1
+          fi
+
+      - name: 날짜 범위 계산
+        id: dates
+        run: |
+          END=$(date -u +%Y-%m-%d)
+          START=$(date -u -d "${DAYS} days ago" +%Y-%m-%d 2>/dev/null || \
+                  date -u -v-${DAYS}d +%Y-%m-%d)
+          echo "start=$START" >> "$GITHUB_OUTPUT"
+          echo "end=$END"     >> "$GITHUB_OUTPUT"
+          echo "period: $START ~ $END"
+
+      - name: GoatCounter hits 조회
+        id: fetch
+        run: |
+          START="${{ steps.dates.outputs.start }}"
+          END="${{ steps.dates.outputs.end }}"
+
+          # 전체 이벤트 히트 (limit=200, event=true)
+          HITS=$(curl -sf \
+            -H "Authorization: Bearer $GOATCOUNTER_TOKEN" \
+            "${GOATCOUNTER_API}/stats/hits?start=${START}&end=${END}&limit=200" \
+            2>/dev/null) || HITS='{"hits":[]}'
+
+          echo "hits_json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$HITS"          >> "$GITHUB_OUTPUT"
+          echo "EOF"            >> "$GITHUB_OUTPUT"
+
+      - name: A/B lift 계산
+        id: lift
+        run: |
+          python3 - << 'PYEOF'
+          import json, os, sys
+
+          hits_json = os.environ.get("HITS_JSON", '{"hits":[]}')
+          try:
+              data = json.loads(hits_json)
+          except Exception:
+              data = {"hits": []}
+
+          hits = data.get("hits", [])
+
+          # 이벤트 경로 패턴: /event/{name}~{variant}
+          def count_event(name, variant):
+              path = f"/event/{name}~{variant}"
+              return sum(h.get("count", 0) for h in hits if h.get("path", "") == path)
+
+          # file_parsed (변형 미분리 — 업로드 분모)
+          file_parsed = sum(
+              h.get("count", 0) for h in hits
+              if h.get("path", "") == "/event/file_parsed"
+          )
+
+          # copy_btn_click per variant
+          cb_a = count_event("copy_btn_click", "A")
+          cb_b = count_event("copy_btn_click", "B")
+
+          # 세션 추정: 변형별 file_parsed (있으면) 없으면 단순 copy 합계 사용
+          fp_a = count_event("file_parsed", "A") or max(cb_a, 1)
+          fp_b = count_event("file_parsed", "B") or max(cb_b, 1)
+
+          rate_a = cb_a / fp_a if fp_a else 0
+          rate_b = cb_b / fp_b if fp_b else 0
+          lift   = (rate_b - rate_a) / rate_a * 100 if rate_a else 0
+          winner = "B" if lift > 5 else ("A" if lift < -5 else "inconclusive")
+
+          result = {
+              "period_days": int(os.environ.get("DAYS", 7)),
+              "file_parsed_total": file_parsed,
+              "copy_btn_click_A": cb_a,
+              "copy_btn_click_B": cb_b,
+              "rate_A": round(rate_a, 4),
+              "rate_B": round(rate_b, 4),
+              "lift_pct": round(lift, 2),
+              "winner": winner,
+          }
+          print(json.dumps(result, ensure_ascii=False, indent=2))
+
+          # GitHub Actions 출력
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              for k, v in result.items():
+                  f.write(f"{k}={v}\n")
+          PYEOF
+        env:
+          HITS_JSON: ${{ steps.fetch.outputs.hits_json }}
+          DAYS: ${{ env.DAYS }}
+
+      - name: Job summary 출력
+        run: |
+          cat << 'MD' >> "$GITHUB_STEP_SUMMARY"
+          ## TalkCheck A/B Lift 리포트
+
+          | 항목 | 값 |
+          |---|---|
+          | 집계 기간 | ${{ env.DAYS }}일 |
+          | file_parsed 합계 | ${{ steps.lift.outputs.file_parsed_total }} |
+          | copy_btn_click A | ${{ steps.lift.outputs.copy_btn_click_A }} |
+          | copy_btn_click B | ${{ steps.lift.outputs.copy_btn_click_B }} |
+          | 전환율 A | ${{ steps.lift.outputs.rate_A }} |
+          | 전환율 B | ${{ steps.lift.outputs.rate_B }} |
+          | **lift (B vs A)** | **${{ steps.lift.outputs.lift_pct }}%** |
+          | **승자** | **${{ steps.lift.outputs.winner }}** |
+
+          > lift > +5% → B 채택 검토 / lift < -5% → A 유지 / 그 외 → 데이터 추가 대기
+          MD
+
+      - name: 결과 아티팩트 저장
+        uses: actions/upload-artifact@v4
+        with:
+          name: ab-lift-${{ steps.dates.outputs.end }}
+          retention-days: 90
+          path: |
+            /dev/stdin
+        continue-on-error: true

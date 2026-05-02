@@ -32,6 +32,23 @@ function trackEvent(eventName) {
 }
 
 /**
+ * A/B 변형 포함 이벤트 추적
+ * 경로 형식: /event/{name}~{variant}  (예: /event/copy_btn_click~A)
+ * experiment_bi 워크플로우가 GoatCounter API 로 variant별 집계 후 lift 계산
+ * @param {string} eventName
+ */
+function trackEventAB(eventName) {
+  if (typeof window === 'undefined') return;
+  if (!window.goatcounter) return;
+  var variant = (window.__ab && window.__ab.variant) || 'A';
+  window.goatcounter.count({
+    path: '/event/' + eventName + '~' + variant,
+    title: eventName + ' [' + variant + ']',
+    event: true,
+  });
+}
+
+/**
  * AdSense 초기화 — placeholder
  * console error 없이 graceful degradation
  */
@@ -48,5 +65,5 @@ function initAdSense() {
 
 // CommonJS / browser 호환
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { trackPageView, trackEvent, initAdSense };
+  module.exports = { trackPageView, trackEvent, trackEventAB, initAdSense };
 }
