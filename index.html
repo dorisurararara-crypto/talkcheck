@@ -288,9 +288,9 @@
         .replace(/'/g, '&#039;');
     }
 
-    // PWA 서비스 워커 등록
+    // PWA 서비스 워커 등록 — 루트 상대 경로 (GitHub Pages 서브디렉토리 호환)
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/pwa/service-worker.js').catch(() => {});
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
     }
   </script>
 </body>
