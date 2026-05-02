@@ -2,7 +2,7 @@
   "name": "TalkCheck — 카톡 단톡방 무응답자 찾기",
   "short_name": "TalkCheck",
   "description": "카카오톡 단체 채팅방 공지 무응답자를 찾아 @멘션 텍스트를 자동 생성합니다",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f9f9f9",
   "theme_color": "#FEE500",
@@ -10,13 +10,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/pwa/icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/pwa/icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
