@@ -134,6 +134,14 @@
           <button class="btn btn-copy" id="copyBtn">
             📋 복사하기
           </button>
+
+          <!-- Toss 도네이션 CTA — 복사 직후 최고 전환 시점 -->
+          <div class="donate-cta" id="donateCta" style="display:none;">
+            <p class="donate-text">도움이 됐다면 ☕ 커피 한 잔 후원해주세요</p>
+            <a class="btn btn-donate" href="https://toss.me/dorisurararara" target="_blank" rel="noopener" id="tossCta">
+              토스로 후원하기
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -301,10 +309,19 @@
         }, 2000);
         trackEvent('result_copied');        // 변형 미분리 (범용 집계)
         trackEventAB('copy_btn_click');     // A/B lift 계산용
+        // 복사 성공 시 Toss CTA 노출
+        const donateCta = document.getElementById('donateCta');
+        if (donateCta) donateCta.style.display = 'block';
       }
     });
 
     // 유틸
+    // Toss CTA 클릭 추적
+    const tossCta = document.getElementById('tossCta');
+    if (tossCta) {
+      tossCta.addEventListener('click', () => trackEvent('toss_cta_click'));
+    }
+
     function showError(msg) {
       if (msg) {
         errorMsg.textContent = msg;

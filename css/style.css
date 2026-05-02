@@ -428,3 +428,36 @@ footer {
     padding: 28px 0 60px;
   }
 }
+
+/* ── Donate CTA (result 화면 inline) ── */
+.donate-cta {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fffbe6;
+  border: 1px solid #f0d800;
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.donate-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.btn-donate {
+  display: inline-block;
+  background: #FEE500;
+  color: #191919;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.btn-donate:hover,
+.btn-donate:active {
+  background: #E6CF00;
+}
