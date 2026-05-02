@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dorisurararara-crypto.github.io/talkcheck/sitemap.xml

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TalkCheck — 카톡 단톡방 무응답자 찾기</title>
+  <meta name="description" content="카카오톡 단체 채팅방 내보내기 파일로 공지 무응답자를 찾아 @멘션 텍스트를 자동 생성합니다. 완전 클라이언트 처리, 서버 전송 없음.">
+  <meta name="keywords" content="카카오톡, 단톡방, 무응답자, 공지, 확인, 멘션">
+  <meta property="og:title" content="TalkCheck — 카톡 단톡방 무응답자 찾기">
+  <meta property="og:description" content="공지 무응답자를 찾아 @멘션 텍스트를 자동 생성. 파일은 서버로 전송되지 않습니다.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#FEE500">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="pwa/manifest.json">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- GoatCounter 분석 (무료 100k/월) -->
+  <script data-goatcounter="https://talkcheck.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+  <!-- AdSense placeholder — 승인 후 pub ID 교체 -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">TalkCheck</div>
+      <div class="subtitle">카톡 단톡방 무응답자 찾기</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Step 1: 파일 업로드 -->
+    <div class="card">
+      <h2>1. 채팅 파일 올리기</h2>
+      <div class="drop-zone" id="dropZone" role="button" tabindex="0" aria-label="채팅 파일 선택 또는 드래그앤드롭">
+        <span class="icon">💬</span>
+        <p>파일을 여기 끌어다 놓거나<br>클릭해서 선택하세요</p>
+        <p style="font-size:0.78rem;margin-top:8px;color:#aaa">iOS / Android 내보내기 (.txt) 지원</p>
+        <p class="file-name" id="fileName" aria-live="polite"></p>
+      </div>
+      <input type="file" id="fileInput" accept=".txt" aria-hidden="true">
+
+      <details style="margin-top:16px;">
+        <summary style="cursor:pointer;font-size:0.85rem;color:#888;padding:4px 0;">채팅 내보내기 방법 보기</summary>
+        <div class="how-to" style="margin-top:12px;">
+          <ol>
+            <li><strong>iOS:</strong> 채팅방 → 우측 상단 메뉴 → 대화 내용 내보내기 → 파일로 저장</li>
+            <li><strong>Android:</strong> 채팅방 → 우측 상단 ⋮ → 채팅방 서랍 → 채팅방 관리 → 대화내용 내보내기</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <!-- Step 2: 공지 키워드 -->
+    <div class="card">
+      <h2>2. 공지 키워드 입력</h2>
+      <div class="input-group">
+        <label for="keyword">키워드</label>
+        <input type="text" id="keyword" placeholder="예: 공지, 중요, 필독" maxlength="50" autocomplete="off">
+        <p class="input-hint">입력한 키워드가 포함된 첫 메시지를 공지로 인식합니다</p>
+      </div>
+    </div>
+
+    <!-- 실행 버튼 -->
+    <button class="btn btn-primary" id="analyzeBtn" disabled>
+      무응답자 찾기
+    </button>
+
+    <!-- 로딩 -->
+    <div class="loading" id="loading" aria-live="polite">파일 분석 중...</div>
+
+    <!-- 에러 -->
+    <div class="error-msg" id="errorMsg" role="alert" aria-live="assertive"></div>
+
+    <!-- 결과 -->
+    <div id="resultSection" aria-live="polite">
+      <!-- 공지 정보 -->
+      <div class="card">
+        <div class="announcement-info" id="announcementInfo"></div>
+        <div class="result-meta" id="resultMeta"></div>
+
+        <!-- 무응답자 없음 -->
+        <div class="no-result" id="noNonResponders" style="display:none;">
+          <span class="icon">✅</span>
+          모든 멤버가 공지 후 응답했습니다!
+        </div>
+
+        <!-- 무응답자 있음 -->
+        <div id="nonResponderSection" style="display:none;">
+          <div class="responder-status" id="responderStatus"></div>
+          <ul class="nonresponder-list" id="nonResponderList"></ul>
+
+          <h2 style="font-size:0.95rem;margin-bottom:8px;">@멘션 텍스트</h2>
+          <div class="mention-box" id="mentionBox" aria-label="복사할 멘션 텍스트"></div>
+          <button class="btn btn-copy" id="copyBtn">
+            📋 복사하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <!-- AdSense placeholder -->
+    <div class="footer-ads" id="adsPlaceholder">
+      <!-- AdSense 승인 후 아래 주석 해제
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-0000000000000000"
+           data-ad-slot="XXXXXXXXXX"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      -->
+      광고 준비 중
+    </div>
+
+    <!-- Toss 도네이션 -->
+    <div class="footer-donate">
+      ☕ <strong>후원하기</strong> — Toss 도네이션 준비 중
+    </div>
+
+    <div class="footer-links">
+      <a href="docs/privacy.html">개인정보 처리방침</a>
+      <a href="docs/how-to-export.html">채팅 내보내기 방법</a>
+      <a href="https://github.com/dorisurararara-crypto/talkcheck" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <div style="font-size:0.75rem;color:#ccc;">
+      &copy; 2024 TalkCheck · 파일은 기기에서만 처리됩니다
+    </div>
+  </footer>
+
+  <script src="js/parser.js"></script>
+  <script src="js/analyzer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/analytics.js"></script>
+  <script>
+    // ── 앱 초기화 ──
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameEl = document.getElementById('fileName');
+    const keywordInput = document.getElementById('keyword');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultSection = document.getElementById('resultSection');
+    const announcementInfo = document.getElementById('announcementInfo');
+    const resultMeta = document.getElementById('resultMeta');
+    const noNonResponders = document.getElementById('noNonResponders');
+    const nonResponderSection = document.getElementById('nonResponderSection');
+    const responderStatus = document.getElementById('responderStatus');
+    const nonResponderList = document.getElementById('nonResponderList');
+    const mentionBox = document.getElementById('mentionBox');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let parsedData = null;
+
+    // 키워드 저장/복원
+    const KEYWORD_KEY = 'talkcheck.lastKeyword';
+    const saved = localStorage.getItem(KEYWORD_KEY);
+    if (saved) keywordInput.value = saved;
+    keywordInput.addEventListener('input', () => {
+      localStorage.setItem(KEYWORD_KEY, keywordInput.value);
+    });
+
+    // 파일 피커 초기화
+    initFilePicker(dropZone, fileInput, async (file) => {
+      fileNameEl.textContent = file.name;
+      showError('');
+      loading.classList.add('visible');
+      analyzeBtn.disabled = true;
+
+      try {
+        const text = await readFileAsText(file);
+        parsedData = parseKakaoTxt(text);
+
+        if (parsedData.format === 'unknown') {
+          showError('파일 형식을 인식하지 못했습니다. 카카오톡 대화 내보내기 파일(.txt)을 선택해주세요.');
+          parsedData = null;
+        } else {
+          analyzeBtn.disabled = false;
+          trackEvent('file_parsed');
+        }
+      } catch (e) {
+        showError('파일을 읽을 수 없습니다. 다시 시도해주세요.');
+        parsedData = null;
+      } finally {
+        loading.classList.remove('visible');
+      }
+    });
+
+    // 분석 실행
+    analyzeBtn.addEventListener('click', () => {
+      if (!parsedData) return;
+      const keyword = keywordInput.value.trim();
+      if (!keyword) {
+        showError('공지 키워드를 입력해주세요.');
+        keywordInput.focus();
+        return;
+      }
+
+      showError('');
+      const { messages, members, format } = parsedData;
+      const { announcedAt, announcerAuthor, matched } = detectAnnouncement(messages, keyword);
+
+      if (!matched) {
+        showError(`"${keyword}" 키워드가 포함된 메시지를 찾지 못했습니다.`);
+        return;
+      }
+
+      const { responders, nonResponders } = computeNonResponders(messages, members, announcedAt, announcerAuthor);
+      const mentionText = buildMentionText(nonResponders);
+
+      // 공지 정보 표시
+      announcementInfo.innerHTML =
+        `📢 공지: <strong>${announcerAuthor}</strong> · ${formatDate(announcedAt)}`;
+
+      // 결과 메타
+      resultMeta.innerHTML =
+        `전체 <span>${members.size}명</span> · 응답 <span>${responders.length}명</span> · 무응답 <span>${nonResponders.length}명</span>`;
+
+      if (nonResponders.length === 0) {
+        noNonResponders.style.display = 'block';
+        nonResponderSection.style.display = 'none';
+      } else {
+        noNonResponders.style.display = 'none';
+        nonResponderSection.style.display = 'block';
+
+        // 배지
+        responderStatus.innerHTML =
+          `<span class="badge badge-green">✓ 응답 ${responders.length}명</span>` +
+          `<span class="badge badge-red">✗ 무응답 ${nonResponders.length}명</span>`;
+
+        // 무응답자 목록
+        nonResponderList.innerHTML = nonResponders
+          .map(name => `<li>${escapeHtml(name)}</li>`)
+          .join('');
+
+        // 멘션 텍스트
+        mentionBox.textContent = mentionText;
+      }
+
+      resultSection.classList.add('visible');
+      resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      trackEvent('result_shown');
+    });
+
+    // 복사 버튼
+    copyBtn.addEventListener('click', async () => {
+      const text = mentionBox.textContent;
+      const ok = await copyToClipboard(text);
+      if (ok) {
+        copyBtn.textContent = '✅ 복사됨!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = '📋 복사하기';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+        trackEvent('result_copied');
+      }
+    });
+
+    // 유틸
+    function showError(msg) {
+      if (msg) {
+        errorMsg.textContent = msg;
+        errorMsg.classList.add('visible');
+        resultSection.classList.remove('visible');
+      } else {
+        errorMsg.textContent = '';
+        errorMsg.classList.remove('visible');
+      }
+    }
+
+    function formatDate(date) {
+      if (!date) return '';
+      return date.toLocaleString('ko-KR', {
+        month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // PWA 서비스 워커 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/pwa/service-worker.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
