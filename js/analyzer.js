@@ -39,8 +39,8 @@ function computeNonResponders(messages, members, announcedAt, announcerAuthor) {
 
   const responders = new Set();
   for (const msg of messages) {
-    // 공지 timestamp 이후 메시지만 (공지 자체는 제외)
-    if (msg.timestamp > announcedAt && msg.author !== announcerAuthor) {
+    // TIMESTAMP-EQ-007 fix: 공지와 동일 분(>=) 응답 포함 (카카오톡은 분 단위 기록)
+    if (msg.timestamp >= announcedAt && msg.author !== announcerAuthor) {
       responders.add(msg.author);
     }
   }

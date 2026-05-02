@@ -88,6 +88,25 @@ test('buildMentionText([]) → 빈 문자열', () => {
   assert.equal(buildMentionText(null), '');
 });
 
+// ── AT7: TIMESTAMP-EQ-007 — 공지와 동일 분 응답자 포함 ─────────
+test('AT7: 공지와 동일 분(timestamp===announcedAt)에 응답한 사람 → responders에 포함', () => {
+  const announceTime = makeDate(9, 10);
+  const messages = [
+    { author: '이영희', timestamp: makeDate(9, 10), text: '공지 있습니다' },
+    // 동일 분(9:10)에 응답 — TIMESTAMP-EQ-007 버그 시 누락됨
+    { author: '홍길동', timestamp: makeDate(9, 10), text: '확인' },
+    { author: '김철수', timestamp: makeDate(9, 15), text: '알겠습니다' },
+  ];
+  const members = new Set(['이영희', '홍길동', '김철수', '박민준']);
+  const { announcedAt, announcerAuthor } = detectAnnouncement(messages, '공지');
+  const { responders, nonResponders } = computeNonResponders(messages, members, announcedAt, announcerAuthor);
+
+  assert.ok(responders.includes('홍길동'), '동일 분 응답자(홍길동)는 responders에 포함되어야 함');
+  assert.ok(responders.includes('김철수'), '이후 응답자(김철수)도 responders에 포함');
+  assert.ok(!nonResponders.includes('홍길동'), '홍길동은 nonResponders에 없어야 함');
+  assert.ok(nonResponders.includes('박민준'), '미응답자(박민준)는 nonResponders에 포함');
+});
+
 // ── 추가: detectAnnouncement 키워드 없음 ──────────────────────
 test('detectAnnouncement — 키워드 없음 → matched=false', () => {
   const messages = makeSampleMessages();

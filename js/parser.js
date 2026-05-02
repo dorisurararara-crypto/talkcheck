@@ -90,6 +90,9 @@ function parseKakaoTxt(rawText) {
         const timestamp = toDate(ampm, h, min, currentDate);
         members.add(author);
         messages.push({ author, timestamp, text });
+      } else if (messages.length > 0) {
+        // MULTILINE-005 fix: 날짜 헤더·메시지 헤더 미매칭 → 이전 메시지에 이어붙임
+        messages[messages.length - 1].text += '\n' + trimmed;
       }
     }
   } else {
@@ -105,6 +108,9 @@ function parseKakaoTxt(rawText) {
         const timestamp = toDate(ampm, h, min, dateCtx);
         members.add(author);
         messages.push({ author, timestamp, text });
+      } else if (messages.length > 0) {
+        // MULTILINE-005 fix: 미매칭 라인 → 이전 메시지에 이어붙임
+        messages[messages.length - 1].text += '\n' + trimmed;
       }
     }
   }

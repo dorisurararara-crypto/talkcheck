@@ -42,6 +42,50 @@ test('AT8: 알 수 없는 포맷 → format=unknown', () => {
   assert.equal(result.messages.length, 0, 'unknown 포맷은 messages 없어야 함');
 });
 
+// ── AT9: MULTILINE-005 — iOS 다중 라인 메시지 이어붙임 ────────
+test('AT9: iOS 멀티라인 메시지 → 두 번째 줄 이전 메시지 text에 append', () => {
+  const raw = [
+    '--------------- 2024년 3월 15일 금요일 ---------------',
+    '[홍길동] [오전 9:00] 공지 있습니다',
+    '오늘 오후 2시 회의실 A',
+    '참석 필수입니다',
+    '[김철수] [오전 9:05] 확인',
+  ].join('\n');
+
+  const result = parseKakaoTxt(raw);
+
+  assert.equal(result.format, 'ios');
+  assert.equal(result.messages.length, 2, `messages.length=2 이어야 하는데 ${result.messages.length}`);
+  assert.ok(
+    result.messages[0].text.includes('오늘 오후 2시 회의실 A'),
+    '두 번째 줄이 첫 메시지 text에 포함되어야 함'
+  );
+  assert.ok(
+    result.messages[0].text.includes('참석 필수입니다'),
+    '세 번째 줄도 첫 메시지 text에 포함되어야 함'
+  );
+  assert.equal(result.messages[1].author, '김철수', '두 번째 메시지 작성자는 김철수');
+});
+
+// ── AT10: MULTILINE-005 — Android 다중 라인 메시지 이어붙임 ───
+test('AT10: Android 멀티라인 메시지 → 두 번째 줄 이전 메시지 text에 append', () => {
+  const raw = [
+    '2024년 3월 15일 오전 9:00, 홍길동 : 공지입니다',
+    '오늘 미팅 있습니다',
+    '2024년 3월 15일 오전 9:05, 김철수 : 확인했습니다',
+  ].join('\n');
+
+  const result = parseKakaoTxt(raw);
+
+  assert.equal(result.format, 'android');
+  assert.equal(result.messages.length, 2, `messages.length=2 이어야 하는데 ${result.messages.length}`);
+  assert.ok(
+    result.messages[0].text.includes('오늘 미팅 있습니다'),
+    '두 번째 줄이 첫 메시지 text에 포함되어야 함'
+  );
+  assert.equal(result.messages[1].author, '김철수');
+});
+
 // ── AT15: ReDoS 취약성 없음 (10MB 악성 입력) ─────────────────
 test('AT15: ReDoS — 10MB 악성 입력 2초 이내 처리', (t, done) => {
   // ReDoS 유발 패턴: 정규식 backtracking 극대화
