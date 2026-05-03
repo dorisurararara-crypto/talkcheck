@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>학부모 단톡방 공지 확인 안 한 분 찾기 — TalkCheck</title>
+  <meta name="description" content="학교 학부모 단톡방 공지 보냈는데 확인 안 한 분 누구인지 10초 만에 확인. 카카오톡 txt 파일 한 번 올리면 @멘션 명단 자동 완성. 무료, 서버 전송 없음.">
+  <link rel="canonical" href="https://dorisurararara-crypto.github.io/talkcheck/docs/school-parents-chat.html">
+  <meta property="og:title" content="학부모 단톡방 공지 확인 안 한 분 찾기 — TalkCheck">
+  <meta property="og:description" content="학부모 단톡 공지 후 미확인 학부모 명단 자동 추출. txt 파일 업로드만으로 @멘션 텍스트 완성.">
+  <meta property="og:url" content="https://dorisurararara-crypto.github.io/talkcheck/docs/school-parents-chat.html">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:image" content="https://dorisurararara-crypto.github.io/talkcheck/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="학부모 단톡방 공지 확인 안 한 분 찾기">
+  <meta name="twitter:description" content="학부모 단톡 미확인자 명단 자동 추출 — TalkCheck">
+  <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "학부모 단톡방 공지 확인 안 한 분 찾기",
+    "description": "학교 학부모 단체 카카오톡 채팅방에서 공지 미확인 학부모를 자동으로 추출하는 방법",
+    "totalTime": "PT1M",
+    "supply": [
+      {"@type": "HowToSupply", "name": "학부모 단체방 카카오톡 대화 내보내기 txt 파일"}
+    ],
+    "tool": [
+      {"@type": "HowToTool", "name": "TalkCheck 웹 서비스 (무료, 설치 불필요)"}
+    ],
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "카카오톡 단체방 대화 내보내기",
+        "text": "학부모 단체방 → 우측 상단 ≡ 메뉴 → 채팅방 서랍 → 대화 내보내기 → txt 파일 저장"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "TalkCheck에 파일 업로드",
+        "text": "TalkCheck 접속 후 txt 파일 드래그&드롭 또는 클릭 선택"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "공지 키워드 입력",
+        "text": "공지문에 포함된 단어(예: '내일 준비물', '급식비', '소풍') 입력"
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "미확인 학부모 @멘션 복사",
+        "text": "미확인 학부모 명단과 @멘션 텍스트가 자동 생성 → 복사해서 단톡방에 붙여넣기"
+      }
+    ]
+  }
+  </script>
+  <style>
+    main { max-width: 660px; margin: 0 auto; padding: 24px 16px 64px; }
+    h1 { font-size: 1.35rem; margin-bottom: 8px; line-height: 1.45; }
+    h2 { font-size: 1.05rem; margin-top: 32px; margin-bottom: 8px; color: #222; }
+    p, li { font-size: 0.93rem; line-height: 1.75; color: #444; }
+    li { margin-bottom: 5px; }
+    .back { display: inline-block; margin-bottom: 20px; font-size: 0.85rem; color: #888; text-decoration: none; }
+    .back:hover { color: #333; }
+    .highlight { background: #fffbe6; border-left: 3px solid #FEE500; padding: 10px 14px; border-radius: 4px; font-size: 0.9rem; margin: 20px 0; }
+    .cta { display: inline-block; margin-top: 28px; padding: 12px 24px; background: #FEE500; color: #333; font-weight: bold; border-radius: 8px; text-decoration: none; font-size: 0.95rem; }
+    .cta:hover { background: #f5d800; }
+    ol { padding-left: 1.4em; }
+    ol li { margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 18px 0; }
+    th, td { border: 1px solid #e0e0e0; padding: 8px 12px; text-align: left; }
+    th { background: #f9f9f9; font-weight: 600; }
+    hr { border: none; border-top: 1px solid #eee; margin: 32px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">TalkCheck</div>
+      <div class="subtitle">카톡 단톡방 무응답자 찾기</div>
+    </div>
+  </header>
+  <main>
+    <a href="../index.html" class="back">← 메인으로</a>
+
+    <h1>학부모 단톡방 공지 확인 안 한 분 찾기<br><span style="font-size:0.85em;font-weight:400;color:#666">10초 만에 @멘션 명단 완성</span></h1>
+
+    <p>학교·학원 학부모 단체 카카오톡방 담당자라면 공감하는 상황이 있습니다. 소풍 준비물, 급식비 납부, 방과후 수업 신청 등 중요한 공지를 올렸는데 일부 학부모가 반응하지 않습니다. 누가 확인했는지 직접 스크롤하며 하나하나 파악하다 보면 20~30명짜리 방에서도 10분이 훌쩍 넘습니다.</p>
+
+    <p><strong>TalkCheck</strong>는 카카오톡 대화 내보내기 txt 파일 하나만으로 공지 미확인 학부모 명단과 @멘션 텍스트를 자동 생성합니다. 모든 처리는 브라우저 안에서만 이뤄지고 서버로 전송되는 데이터는 없습니다.</p>
+
+    <div class="highlight">
+      ✅ 설치 불필요 &nbsp;·&nbsp; 무료 &nbsp;·&nbsp; 개인정보 서버 전송 없음 &nbsp;·&nbsp; iOS/Android 모두 지원
+    </div>
+
+    <h2>사용 방법 (4단계)</h2>
+    <ol>
+      <li><strong>대화 내보내기</strong> — 학부모 단체방 열기 → 우측 상단 ≡ → 채팅방 서랍 → 대화 내보내기 → txt 파일 저장</li>
+      <li><strong>TalkCheck 접속</strong> — <a href="../index.html">TalkCheck 열기</a> → txt 파일 드래그&드롭</li>
+      <li><strong>공지 키워드 입력</strong> — 공지문에 포함된 핵심 단어 입력 (예: "급식비", "소풍", "내일 준비물")</li>
+      <li><strong>멘션 복사 후 발송</strong> — 자동 생성된 @멘션 텍스트를 단톡방에 붙여넣기</li>
+    </ol>
+
+    <h2>학부모 단톡 담당자들이 자주 쓰는 공지 유형</h2>
+    <table>
+      <tr><th>공지 유형</th><th>사용 예시 키워드</th></tr>
+      <tr><td>소풍·현장학습 안내</td><td>"소풍", "현장학습", "준비물"</td></tr>
+      <tr><td>급식비·학원비 납부</td><td>"급식비", "납부", "계좌"</td></tr>
+      <tr><td>방과후·특기 수업 신청</td><td>"방과후", "신청", "마감"</td></tr>
+      <tr><td>가정통신문 확인 요청</td><td>"가정통신문", "확인", "도장"</td></tr>
+      <tr><td>긴급 연락·날씨 안내</td><td>"오늘", "내일", "긴급"</td></tr>
+    </table>
+
+    <h2>개인정보는 안전한가요?</h2>
+    <p>TalkCheck는 100% 브라우저 내에서 처리합니다. 대화 내용이나 학부모 이름이 외부 서버로 전송되지 않으며, 페이지를 닫으면 데이터가 자동 삭제됩니다. 학부모 개인정보를 외부에 노출하지 않아도 됩니다.</p>
+
+    <h2>얼마나 빠른가요?</h2>
+    <p>파일 업로드부터 @멘션 텍스트 완성까지 보통 10초 이내입니다. 200명 이상 대형 단체방 파일도 처리 가능합니다.</p>
+
+    <hr>
+
+    <a href="../index.html" class="cta">지금 바로 사용하기 →</a>
+
+    <p style="margin-top:32px;font-size:0.82rem;color:#aaa">관련 문서: <a href="faq.html">자주 묻는 질문</a> · <a href="how-to-export.html">카카오톡 내보내기 방법</a> · <a href="use-cases.html">다양한 활용 사례</a></p>
+  </main>
+</body>
+</html>
